@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Portal de Configuração ESP32</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+            background: #0a0a0a;
+            color: #e5e7eb;
+            min-height: 100vh;
+        }
+        .page {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 32px 16px 48px;
+        }
+        header {
+            margin-bottom: 20px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #f9fafb;
+        }
+        header p {
+            margin: 6px 0 0;
+            color: #9ca3af;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 14px;
+        }
+        .card {
+            background: #111111;
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid #1f1f1f;
+        }
+        h2 {
+            margin: 0 0 10px;
+            font-size: 1.05rem;
+            color: #f9fafb;
+        }
+        .status {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.92rem;
+            background: #18181b;
+            border: 1px solid #27272a;
+            color: #f8fafc;
+            margin-bottom: 14px;
+        }
+        .status.error {
+            background: #1b1112;
+            border-color: #3f1e22;
+            color: #fca5a5;
+        }
+        dl {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px 16px;
+            margin: 0;
+        }
+        dt {
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+        dd {
+            margin: 0;
+            font-weight: 600;
+            color: #f9fafb;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        label {
+            font-size: 0.82rem;
+            color: #9ca3af;
+        }
+        input {
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #27272a;
+            background: #0a0a0a;
+            color: #f9fafb;
+            font-size: 1rem;
+        }
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+        button {
+            margin-top: 6px;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #f9fafb;
+            color: #050505;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #d1d5db;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .helper {
+            font-size: 0.82rem;
+            color: #9ca3af;
+            margin: 0 0 12px;
+        }
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <h1>Configuração Wi-Fi</h1>
+        <p>Atualize o SSID, password da rede STA e faça reset rem. O site permanece acessível em 192.168.4.1.</p>
+    </header>
+    <div class="grid">
+        <section class="card">
+            <h2>Estado do dispositivo</h2>
+            <p class="status" id="status-message">A obter estado...</p>
+            <dl>
+                <dt>SSID guardado</dt><dd id="saved-ssid">—</dd>
+                <dt>IP da STA</dt><dd id="sta-ip">—</dd>
+            </dl>
+        </section>
+        <section class="card">
+            <h2>Atualizar credenciais</h2>
+            <form id="wifi-form" autocomplete="off">
+                <div>
+                    <label for="ssid">SSID</label>
+                    <input type="text" id="ssid" name="ssid" maxlength="32" required>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" maxlength="64" required>
+                </div>
+                <label class="toggle-row" for="show-pass">
+                    <input type="checkbox" id="show-pass">
+                    Mostrar password
+                </label>
+                <button type="submit">Guardar e ligar</button>
+            </form>
+        </section>
+        <section class="card">
+            <h2>Reset remoto</h2>
+            <button type="button" id="reset-button">Reiniciar placa</button>
+        </section>
+    </div>
+</div>
+<script>
+const statusEl = document.getElementById('status-message');
+const savedSsidEl = document.getElementById('saved-ssid');
+const staIpEl = document.getElementById('sta-ip');
+const formEl = document.getElementById('wifi-form');
+const passwordInput = document.getElementById('password');
+const showPassToggle = document.getElementById('show-pass');
+const resetButton = document.getElementById('reset-button');
+let statusTimer = null;
+
+if (showPassToggle && passwordInput) {
+    showPassToggle.addEventListener('change', () => {
+        passwordInput.type = showPassToggle.checked ? 'text' : 'password';
+    });
+}
+
+if (resetButton) {
+    const originalLabel = resetButton.textContent;
+    resetButton.addEventListener('click', async () => {
+        resetButton.disabled = true;
+        resetButton.textContent = 'A reiniciar...';
+        try {
+            const res = await fetch('/reset', {method: 'POST'});
+            if (!res.ok) {
+                const text = await res.text();
+                console.error('Pedido de reset falhou:', text);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setTimeout(() => {
+                resetButton.disabled = false;
+                resetButton.textContent = originalLabel;
+            }, 2500);
+        }
+    });
+}
+
+async function refreshStatus() {
+    try {
+        const res = await fetch('/status', {cache: 'no-store'});
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        statusEl.textContent = data.message || 'Estado indisponível.';
+        savedSsidEl.textContent = data.savedSsid || '—';
+        staIpEl.textContent = data.staIp || '—';
+        statusEl.classList.toggle('error', data.state === 'error');
+        if (data.savedSsid && !formEl.ssid.value) {
+            formEl.ssid.value = data.savedSsid;
+        }
+    } catch (err) {
+        statusEl.textContent = 'Erro a obter estado. Verifique a ligação.';
+        statusEl.classList.add('error');
+        console.error(err);
+    } finally {
+        clearTimeout(statusTimer);
+        statusTimer = setTimeout(refreshStatus, 2500);
+    }
+}
+
+formEl.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const formData = new FormData(formEl);
+    const body = new URLSearchParams(formData);
+    statusEl.textContent = 'A ligar ao Wi-Fi...';
+    statusEl.classList.remove('error');
+    try {
+        const res = await fetch('/wifi', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body
+        });
+        const text = await res.text();
+        statusEl.textContent = text || 'Pedido enviado.';
+        statusEl.classList.toggle('error', !res.ok);
+    } catch (err) {
+        statusEl.textContent = 'Não foi possível enviar o pedido.';
+        statusEl.classList.add('error');
+        console.error(err);
+    } finally {
+        refreshStatus();
+    }
+});
+
+refreshStatus();
+</script>
+</body>
+</html>

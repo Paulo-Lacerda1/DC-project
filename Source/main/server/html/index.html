@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>ESP32 Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #0f172a;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero {
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            margin: 0 0 4px;
+            font-size: 1.6rem;
+        }
+
+        .hero p {
+            margin: 0;
+            color: #475569;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .status-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .status-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .status-card h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: #111827;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 6px 0;
+            font-size: 0.95rem;
+        }
+
+        .label {
+            color: #475569;
+        }
+
+        .value {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            border: 1px solid #cbd5e1;
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .badge.ok {
+            background: #ecfdf3;
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        .badge.bad {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #b91c1c;
+        }
+
+        .softap-clients {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 8px;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+
+        .softap-client {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin: 4px 0;
+            font-family: monospace;
+            gap: 8px;
+        }
+
+        .softap-client .ip {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .softap-empty {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .sensor-card {
+            margin-top: 16px;
+        }
+
+        .readings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .reading {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            border: 1px dashed #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .reading .value {
+            font-size: 1.4rem;
+        }
+
+        .alert {
+            display: none;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .alert.ok {
+            background: #e7f6ef;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+        }
+
+        .period-form {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .period-form label {
+            font-weight: 600;
+        }
+
+        .period-form input {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            flex: 1 1 120px;
+        }
+
+        .period-form button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #111827;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .period-form button:hover {
+            background: #0f172a;
+        }
+
+        .toggle-form {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .toggle-form .details {
+            flex: 1 1 220px;
+        }
+
+        .toggle-form .details .label {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .toggle-form .details .hint {
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .toggle-form .details .toggle-state {
+            margin-top: 4px;
+            font-weight: 700;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 30px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: 0.2s;
+            border-radius: 34px;
+            border: 1px solid #94a3b8;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.2s;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        input:checked + .slider {
+            background-color: #10b981;
+            border-color: #0ea371;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        .chart-card {
+            margin-top: 16px;
+        }
+
+        .chart-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .chart-title {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #0f172a;
+        }
+
+        .chart-sub {
+            margin: 2px 0 0;
+            color: #475569;
+            font-size: 0.92rem;
+        }
+
+        .chart-legend {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        .legend-dot.temp {
+            background: #f97316;
+        }
+
+        .legend-dot.hum {
+            background: #0ea5e9;
+        }
+
+        .chart-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .chart-stat {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px dashed #e2e8f0;
+            background: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-frame {
+            position: relative;
+            background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 10px;
+            height: 260px;
+        }
+
+        .chart-empty {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .line-temp {
+            fill: none;
+            stroke: #f97316;
+            stroke-width: 2.5;
+        }
+
+        .line-hum {
+            fill: none;
+            stroke: #0284c7;
+            stroke-width: 2.5;
+        }
+
+        .line-limit {
+            stroke-dasharray: 6 6;
+            stroke-width: 1.2;
+        }
+
+        .line-limit.temp {
+            stroke: rgba(249, 115, 22, 0.4);
+        }
+
+        .line-limit.hum {
+            stroke: rgba(2, 132, 199, 0.4);
+        }
+
+        .chart-grid {
+            stroke: #e2e8f0;
+            stroke-width: 1;
+        }
+
+        .axis-label {
+            fill: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .period-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header class="hero">
+        <h1>Estado do Sistema</h1>
+        <p>Dashboard do ESP32-C6</p>
+    </header>
+
+    <section class="status-section">
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="card-header">
+                    <h3>Wi-Fi</h3>
+                    <span id="wifi-connected" class="badge">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">IP</span>
+                    <span class="value" id="wifi-ip">—</span>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="card-header">
+                    <h3>SoftAP</h3>
+                    <span id="softap-status" class="badge">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Clientes</span>
+                    <span class="value" id="softap-count">0</span>
+                </div>
+                <div id="softap-clients" class="softap-clients">
+                    <span class="softap-empty">Sem clientes ligados.</span>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="card-header">
+                    <h3>Sensor</h3>
+                    <span id="sensor-mounted" class="badge">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Estado</span>
+                    <span class="value" id="sensor-state">—</span>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="card-header">
+                    <h3>MQTT</h3>
+                    <span id="mqtt-connected" class="badge">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Broker</span>
+                    <span class="value" id="mqtt-broker">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Última tentativa</span>
+                    <span class="value" id="mqtt-last-attempt">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Falhas</span>
+                    <span class="value" id="mqtt-fail-count">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Enviadas</span>
+                    <span class="value" id="mqtt-sent">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Em fila</span>
+                    <span class="value" id="mqtt-buffered">—</span>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="card-header">
+                    <h3>Cartão SD</h3>
+                    <span id="sd-mounted" class="badge">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Espaço livre</span>
+                    <span class="value" id="sd-free">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Entradas de log</span>
+                    <span class="value" id="sd-logs">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Último log</span>
+                    <span class="value" id="sd-last-log">—</span>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="card-header">
+                    <h3>Data.txt</h3>
+                    <span id="data-mounted" class="badge">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Linhas</span>
+                    <span class="value" id="data-lines">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Última escrita</span>
+                    <span class="value" id="data-last">—</span>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="card-header">
+                    <h3>Sistema</h3>
+                    <span class="badge">AO VIVO</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Uptime</span>   
+                    <span class="value" id="sys-uptime">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">Firmware</span>
+                    <span class="value" id="sys-fw">—</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">UID</span>
+                    <span class="value" id="sys-uid">—</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card sensor-card">
+        <div id="alert" class="alert"></div>
+        <h2>Monitor Ambiental</h2>
+
+        <div class="readings">
+            <div class="reading">
+                <span class="label">Temperatura</span>
+                <span class="value" id="temperature-value">—</span>
+            </div>
+            <div class="reading">
+                <span class="label">Humidade</span>
+                <span class="value" id="humidity-value">—</span>
+            </div>
+            <div class="reading">
+                <span class="label">Última atualização</span>
+                <span class="value" id="status-value">—</span>
+            </div>
+            <div class="reading">
+                <span class="label">Período atual</span>
+                <span class="value" id="period-value">—</span>
+            </div>
+        </div>
+
+        <form class="period-form" id="period-form" action="/set_period" method="POST">
+            <label for="period">Período de leitura:</label>
+            <input type="number" id="period" name="period" min="1" max="3600" value="60" required>
+            <button type="submit">Guardar</button>
+        </form>
+
+        <form class="toggle-form" id="sd-form" action="/update_config" method="POST">
+            <div class="details">
+                <div class="label">Registo em cartão SD</div>
+                <div class="hint">Ativa ou desativa a escrita das leituras em data.txt</div>
+            </div>
+            <label class="switch" aria-label="Ativar/desativar logging no SD">
+                <input type="checkbox" id="enable-sd" name="enable_sd_logging" {{ENABLE_SD_LOGGING_CHECKED}}>
+                <span class="slider"></span>
+            </label>
+        </form>
+
+        <div class="card chart-card">
+            <div class="chart-head">
+                <div>
+                    <div class="chart-title">Histórico ao vivo</div>
+                    <div class="chart-sub">Últimos 50 pontos recebidos do servidor web</div>
+                </div>
+                <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-dot temp"></span>Temperatura</span>
+                    <span class="legend-item"><span class="legend-dot hum"></span>Humidade</span>
+                </div>
+            </div>
+
+            <div class="chart-stats">
+                <div class="chart-stat">
+                    <span class="label">Temp. mínima</span>
+                    <span class="value" id="temp-min">—</span>
+                </div>
+                <div class="chart-stat">
+                    <span class="label">Temp. máxima</span>
+                    <span class="value" id="temp-max">—</span>
+                </div>
+                <div class="chart-stat">
+                    <span class="label">Hum. mínima</span>
+                    <span class="value" id="hum-min">—</span>
+                </div>
+                <div class="chart-stat">
+                    <span class="label">Hum. máxima</span>
+                    <span class="value" id="hum-max">—</span>
+                </div>
+            </div>
+
+            <div class="chart-frame">
+                <div class="chart-empty" id="chart-empty">Sem dados recentes</div>
+                <svg id="history-chart" class="chart-svg" viewBox="0 0 800 240" preserveAspectRatio="none" aria-label="Histórico de temperatura e humidade">
+                    <g id="chart-grid"></g>
+                    <line id="temp-min-line" class="line-limit temp" style="display:none" />
+                    <line id="temp-max-line" class="line-limit temp" style="display:none" />
+                    <line id="hum-min-line" class="line-limit hum" style="display:none" />
+                    <line id="hum-max-line" class="line-limit hum" style="display:none" />
+                    <path id="temp-path" class="line-temp" d=""/>
+                    <path id="hum-path" class="line-hum" d=""/>
+                    <text class="axis-label x" x="400" y="236">Tempo (últimos pontos)</text>
+                    <text class="axis-label y" x="14" y="120" transform="rotate(-90 14 120)">Valor</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+const statusIntervalMs = 750;      // página atualiza estado geral a cada 0.75 s
+const sensorPollIntervalMs = 1000;  // portal atualiza leituras a cada 1 s
+let pollTimer = null;
+let statusTimer = null;
+
+const tempEl = document.getElementById('temperature-value');
+const humEl = document.getElementById('humidity-value');
+const statusEl = document.getElementById('status-value');
+const periodEl = document.getElementById('period-value');
+const periodInput = document.getElementById('period');
+let isEditingPeriod = false;
+const alertEl = document.getElementById('alert');
+const form = document.getElementById('period-form');
+const sdForm = document.getElementById('sd-form');
+const sdToggle = document.getElementById('enable-sd');
+const chartEls = {
+    svg: document.getElementById('history-chart'),
+    grid: document.getElementById('chart-grid'),
+    tempPath: document.getElementById('temp-path'),
+    humPath: document.getElementById('hum-path'),
+    tempMinLine: document.getElementById('temp-min-line'),
+    tempMaxLine: document.getElementById('temp-max-line'),
+    humMinLine: document.getElementById('hum-min-line'),
+    humMaxLine: document.getElementById('hum-max-line'),
+    tempMinText: document.getElementById('temp-min'),
+    tempMaxText: document.getElementById('temp-max'),
+    humMinText: document.getElementById('hum-min'),
+    humMaxText: document.getElementById('hum-max'),
+    emptyState: document.getElementById('chart-empty'),
+};
+
+const chartHistory = [];
+const maxHistoryPoints = 50;
+const chartConfig = {
+    width: 800,
+    height: 240,
+    padding: 32,
+};
+
+const statusEls = {
+    wifiConnected: document.getElementById('wifi-connected'),
+    wifiIp: document.getElementById('wifi-ip'),
+    softapStatus: document.getElementById('softap-status'),
+    softapCount: document.getElementById('softap-count'),
+    softapClients: document.getElementById('softap-clients'),
+    sensorMounted: document.getElementById('sensor-mounted'),
+    sensorState: document.getElementById('sensor-state'),
+    mqttConnected: document.getElementById('mqtt-connected'),
+    mqttBroker: document.getElementById('mqtt-broker'),
+    mqttLastAttempt: document.getElementById('mqtt-last-attempt'),
+    mqttFailCount: document.getElementById('mqtt-fail-count'),
+    mqttSent: document.getElementById('mqtt-sent'),
+    mqttBuffered: document.getElementById('mqtt-buffered'),
+    sdMounted: document.getElementById('sd-mounted'),
+    sdFree: document.getElementById('sd-free'),
+    sdLogs: document.getElementById('sd-logs'),
+    sdLastLog: document.getElementById('sd-last-log'),
+    dataMounted: document.getElementById('data-mounted'),
+    dataLines: document.getElementById('data-lines'),
+    dataLast: document.getElementById('data-last'),
+    sysUptime: document.getElementById('sys-uptime'),
+    sysFirmware: document.getElementById('sys-fw'),
+    sysUid: document.getElementById('sys-uid'),
+};
+
+const fallbackValue = '—';
+
+function updateBadge(el, ok, labels) {
+    if (!el) {
+        return;
+    }
+    const labelOk = labels && labels[0] ? labels[0] : 'Ligado';
+    const labelKo = labels && labels[1] ? labels[1] : 'Desligado';
+    el.textContent = ok ? labelOk : labelKo;
+    el.classList.remove('ok', 'bad');
+    el.classList.add(ok ? 'ok' : 'bad');
+}
+
+function formatBytes(bytes) {
+    if (!bytes || bytes < 0) {
+        return fallbackValue;
+    }
+    const gb = bytes / 1073741824;
+    if (gb >= 1) {
+        return gb.toFixed(2) + ' GB';
+    }
+    const mb = bytes / 1048576;
+    return mb.toFixed(1) + ' MB';
+}
+
+function formatDuration(sec) {
+    if (!sec || sec < 0) {
+        return fallbackValue;
+    }
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = Math.floor(sec % 60);
+    const parts = [];
+    if (h > 0) {
+        parts.push(h + 'h');
+    }
+    if (m > 0 || h > 0) {
+        parts.push(m + 'm');
+    }
+    parts.push(s + 's');
+    return parts.join(' ');
+}
+
+function formatRelative(ts, uptime) {
+    if (!ts || !uptime) {
+        return fallbackValue;
+    }
+    const diff = Math.max(0, uptime - ts);
+    if (diff < 1) {
+        return 'agora';
+    }
+    if (diff < 60) {
+        return Math.round(diff) + ' s atrás';
+    }
+    const mins = Math.round(diff / 60);
+    if (mins < 60) {
+        return mins + ' min atrás';
+    }
+    const hours = Math.round(mins / 60);
+    return hours + ' h atrás';
+}
+
+function showAlert(msg, isError) {
+    if (!alertEl) {
+        return;
+    }
+    alertEl.textContent = msg;
+    alertEl.classList.remove('ok', 'error');
+    alertEl.classList.add(isError ? 'error' : 'ok');
+    alertEl.style.display = 'block';
+    setTimeout(() => {
+        alertEl.style.display = 'none';
+    }, 4000);
+}
+
+function formatReading(value, suffix) {
+    if (!Number.isFinite(value)) {
+        return fallbackValue;
+    }
+    return value.toFixed(1) + suffix;
+}
+
+function computeRange(key) {
+    let min = Infinity;
+    let max = -Infinity;
+    chartHistory.forEach((point) => {
+        const val = Number(point[key]);
+        if (Number.isFinite(val)) {
+            if (val < min) min = val;
+            if (val > max) max = val;
+        }
+    });
+    if (!Number.isFinite(min) || !Number.isFinite(max)) {
+        return { min: null, max: null };
+    }
+    return { min, max };
+}
+
+function computeCombinedRange() {
+    let min = Infinity;
+    let max = -Infinity;
+    chartHistory.forEach((point) => {
+        const t = Number(point.temperature);
+        const h = Number(point.humidity);
+        if (Number.isFinite(t)) {
+            if (t < min) min = t;
+            if (t > max) max = t;
+        }
+        if (Number.isFinite(h)) {
+            if (h < min) min = h;
+            if (h > max) max = h;
+        }
+    });
+    if (!Number.isFinite(min) || !Number.isFinite(max)) {
+        return { min: null, max: null };
+    }
+    if (min === max) {
+        const pad = Math.max(1, Math.abs(min) * 0.05);
+        min -= pad;
+        max += pad;
+    }
+    return { min, max };
+}
+
+function renderChartGrid() {
+    if (!chartEls.grid) {
+        return;
+    }
+    const { width, height, padding } = chartConfig;
+    const usableHeight = height - padding * 2;
+    const steps = 4;
+    let gridLines = '';
+    for (let i = 0; i <= steps; i++) {
+        const y = padding + (usableHeight / steps) * i;
+        gridLines += `<line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" class="chart-grid"/>`;
+    }
+    chartEls.grid.innerHTML = gridLines;
+}
+
+function buildPath(key, minVal, maxVal, minTs, maxTs) {
+    const { width, height, padding } = chartConfig;
+    const usableWidth = width - padding * 2;
+    const usableHeight = height - padding * 2;
+    const range = Math.max(maxVal - minVal, 1);
+    const timeRange = Math.max(maxTs - minTs, 1);
+    return chartHistory.reduce((path, point, idx) => {
+        const x = padding + ((point.ts - minTs) / timeRange) * usableWidth;
+        const y = padding + (1 - (point[key] - minVal) / range) * usableHeight;
+        const cmd = `${idx === 0 ? 'M' : ' L'}${x.toFixed(2)} ${y.toFixed(2)}`;
+        return path + cmd;
+    }, '');
+}
+
+function setLimitLine(el, value, minVal, maxVal) {
+    if (!el || !Number.isFinite(value) || minVal === null || maxVal === null) {
+        if (el) el.style.display = 'none';
+        return;
+    }
+    const { width, height, padding } = chartConfig;
+    const usableHeight = height - padding * 2;
+    const range = Math.max(maxVal - minVal, 1);
+    const y = padding + (1 - (value - minVal) / range) * usableHeight;
+    el.setAttribute('x1', padding);
+    el.setAttribute('x2', width - padding);
+    el.setAttribute('y1', y);
+    el.setAttribute('y2', y);
+    el.style.display = 'block';
+}
+
+function updateChartStats(tempRange, humRange) {
+    if (chartEls.tempMinText) {
+        chartEls.tempMinText.textContent = Number.isFinite(tempRange.min)
+            ? formatReading(tempRange.min, ' °C')
+            : fallbackValue;
+    }
+    if (chartEls.tempMaxText) {
+        chartEls.tempMaxText.textContent = Number.isFinite(tempRange.max)
+            ? formatReading(tempRange.max, ' °C')
+            : fallbackValue;
+    }
+    if (chartEls.humMinText) {
+        chartEls.humMinText.textContent = Number.isFinite(humRange.min)
+            ? formatReading(humRange.min, ' %')
+            : fallbackValue;
+    }
+    if (chartEls.humMaxText) {
+        chartEls.humMaxText.textContent = Number.isFinite(humRange.max)
+            ? formatReading(humRange.max, ' %')
+            : fallbackValue;
+    }
+}
+
+function renderHistory() {
+    if (!chartEls.svg) {
+        return;
+    }
+    const hasData = chartHistory.length > 0;
+    if (chartEls.emptyState) {
+        chartEls.emptyState.style.display = hasData ? 'none' : 'flex';
+    }
+    if (!hasData) {
+        if (chartEls.tempPath) chartEls.tempPath.setAttribute('d', '');
+        if (chartEls.humPath) chartEls.humPath.setAttribute('d', '');
+        setLimitLine(chartEls.tempMinLine, null, null, null);
+        setLimitLine(chartEls.tempMaxLine, null, null, null);
+        setLimitLine(chartEls.humMinLine, null, null, null);
+        setLimitLine(chartEls.humMaxLine, null, null, null);
+        updateChartStats({ min: null, max: null }, { min: null, max: null });
+        return;
+    }
+
+    const tempRange = computeRange('temperature');
+    const humRange = computeRange('humidity');
+    const comboRange = computeCombinedRange();
+    const minTs = chartHistory[0].ts;
+    const maxTs = chartHistory[chartHistory.length - 1].ts || minTs + 1;
+
+    renderChartGrid();
+
+    if (chartEls.tempPath && comboRange.min !== null) {
+        chartEls.tempPath.setAttribute('d', buildPath('temperature', comboRange.min, comboRange.max, minTs, maxTs));
+    }
+    if (chartEls.humPath && comboRange.min !== null) {
+        chartEls.humPath.setAttribute('d', buildPath('humidity', comboRange.min, comboRange.max, minTs, maxTs));
+    }
+
+    setLimitLine(chartEls.tempMinLine, tempRange.min, comboRange.min, comboRange.max);
+    setLimitLine(chartEls.tempMaxLine, tempRange.max, comboRange.min, comboRange.max);
+    setLimitLine(chartEls.humMinLine, humRange.min, comboRange.min, comboRange.max);
+    setLimitLine(chartEls.humMaxLine, humRange.max, comboRange.min, comboRange.max);
+    updateChartStats(tempRange, humRange);
+}
+
+function pushReading(temp, hum) {
+    if (!Number.isFinite(temp) || !Number.isFinite(hum)) {
+        return;
+    }
+    chartHistory.push({
+        ts: Date.now(),
+        temperature: temp,
+        humidity: hum,
+    });
+    if (chartHistory.length > maxHistoryPoints) {
+        chartHistory.shift();
+    }
+    renderHistory();
+}
+
+async function fetchSensor() {
+    try {
+        const res = await fetch('/api/sensor');
+        if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+        }
+        const payload = await res.json();
+        if (typeof payload.periodMs === 'number' && payload.periodMs > 0) {
+            const seconds = Math.round(payload.periodMs / 1000);
+            if (periodEl) {
+                periodEl.textContent = seconds + ' s';
+            }
+            if (periodInput && !isEditingPeriod) {
+                periodInput.value = seconds;
+            }
+        }
+        const hasData = !!payload.hasData;
+        updateBadge(statusEls.sensorMounted, hasData, ['Montado', 'Ausente']);
+        if (statusEls.sensorState) {
+            statusEls.sensorState.textContent = hasData ? 'Montado' : 'Ausente';
+        }
+        if (payload.hasData) {
+            tempEl.textContent = payload.temperature.toFixed(2) + ' °C';
+            humEl.textContent = payload.humidity.toFixed(2) + ' %';
+            statusEl.textContent = new Date().toLocaleTimeString();
+            pushReading(payload.temperature, payload.humidity);
+        } else {
+            tempEl.textContent = fallbackValue;
+            humEl.textContent = fallbackValue;
+            statusEl.textContent = 'Sem dados';
+        }
+    } catch (err) {
+        updateBadge(statusEls.sensorMounted, false, ['Montado', 'Ausente']);
+        if (statusEls.sensorState) {
+            statusEls.sensorState.textContent = 'Erro';
+        }
+        tempEl.textContent = fallbackValue;
+        humEl.textContent = fallbackValue;
+        statusEl.textContent = 'Erro a obter dados';
+        console.error('Erro ao atualizar leituras', err);
+    }
+    clearTimeout(pollTimer);
+    pollTimer = setTimeout(fetchSensor, sensorPollIntervalMs);
+}
+
+async function fetchStatus() {
+    try {
+        const res = await fetch('/api/status');
+        if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+        }
+        const data = await res.json();
+        const uptime = Number(data && data.general ? data.general.uptime_seconds : 0) || 0;
+
+        updateBadge(statusEls.wifiConnected, data && data.wifi ? !!data.wifi.sta_connected : false, ['Ligado', 'Desligado']);
+        if (statusEls.wifiIp) {
+            statusEls.wifiIp.textContent = data && data.wifi && data.wifi.ip_addr ? data.wifi.ip_addr : fallbackValue;
+        }
+
+        const softap = data && data.softap ? data.softap : null;
+        const softapCount = Number(softap && typeof softap.client_count === 'number' ? softap.client_count : 0) || 0;
+        if (statusEls.softapCount) {
+            statusEls.softapCount.textContent = softapCount.toString();
+        }
+        updateBadge(statusEls.softapStatus, softapCount > 0, ['Clientes', 'Vazio']);
+        if (statusEls.softapClients) {
+            if (softap && Array.isArray(softap.clients) && softap.clients.length > 0) {
+                const items = softap.clients.map((client) => {
+                    const ipVal = client && client.ip ? client.ip : fallbackValue;
+                    const aid = client && typeof client.aid === 'number' ? client.aid : '-';
+                    return `<div class="softap-client"><span class="ip" title="AID ${aid}">${ipVal}</span></div>`;
+                });
+                statusEls.softapClients.innerHTML = items.join('');
+            } else {
+                statusEls.softapClients.innerHTML = '<span class="softap-empty">Sem clientes ligados.</span>';
+            }
+        }
+
+        updateBadge(statusEls.mqttConnected, data && data.mqtt ? !!data.mqtt.connected : false, ['Online', 'Offline']);
+        if (statusEls.mqttBroker) {
+            const brokerHost = data && data.mqtt && data.mqtt.broker_host
+                ? data.mqtt.broker_host
+                : '';
+            statusEls.mqttBroker.textContent = brokerHost
+                ? `mqtts://${brokerHost}`
+                : fallbackValue;
+        }
+        if (statusEls.mqttLastAttempt) {
+            statusEls.mqttLastAttempt.textContent = formatRelative(data && data.mqtt ? data.mqtt.last_attempt_ts : 0, uptime);
+        }
+        if (statusEls.mqttFailCount) {
+            statusEls.mqttFailCount.textContent = (data && data.mqtt && (data.mqtt.fail_count || data.mqtt.fail_count === 0))
+                ? data.mqtt.fail_count
+                : fallbackValue;
+        }
+        if (statusEls.mqttSent) {
+            statusEls.mqttSent.textContent = (data && data.mqtt && (data.mqtt.messages_sent || data.mqtt.messages_sent === 0))
+                ? data.mqtt.messages_sent
+                : fallbackValue;
+        }
+        if (statusEls.mqttBuffered) {
+            statusEls.mqttBuffered.textContent = (data && data.mqtt && (data.mqtt.messages_buffered || data.mqtt.messages_buffered === 0))
+                ? data.mqtt.messages_buffered
+                : fallbackValue;
+        }
+
+        const sdMounted = data && data.sd ? !!data.sd.mounted : false;
+        const dataActive = data && data.sd ? (sdMounted && !!data.sd.data_logging_enabled) : false;
+        updateBadge(statusEls.sdMounted, sdMounted, ['Montado', 'Ausente']);
+        updateBadge(statusEls.dataMounted, dataActive, ['Ativo', 'Desativado']);
+        if (statusEls.sdFree) {
+            const free = Number(data && data.sd ? data.sd.free_space_bytes : 0) || 0;
+            statusEls.sdFree.textContent = formatBytes(free);
+        }
+        if (statusEls.sdLogs) {
+            statusEls.sdLogs.textContent = (data && data.sd && (data.sd.log_entries || data.sd.log_entries === 0))
+                ? data.sd.log_entries + ' linhas'
+                : fallbackValue;
+        }
+        if (statusEls.sdLastLog) {
+            statusEls.sdLastLog.textContent = formatRelative(data && data.sd ? data.sd.last_log_ts : 0, uptime);
+        }
+        if (statusEls.dataLines) {
+            statusEls.dataLines.textContent = (data && data.sd && (data.sd.data_entries || data.sd.data_entries === 0))
+                ? data.sd.data_entries + ' linhas'
+                : fallbackValue;
+        }
+        if (statusEls.dataLast) {
+            statusEls.dataLast.textContent = formatRelative(data && data.sd ? data.sd.data_last_log_ts : 0, uptime);
+        }
+
+        if (statusEls.sysUptime) {
+            statusEls.sysUptime.textContent = formatDuration(uptime);
+        }
+        if (statusEls.sysFirmware) {
+            statusEls.sysFirmware.textContent = (data && data.general && data.general.firmware_version)
+                ? data.general.firmware_version
+                : fallbackValue;
+        }
+        if (statusEls.sysUid) {
+            statusEls.sysUid.textContent = (data && data.general && data.general.device_uid)
+                ? data.general.device_uid
+                : fallbackValue;
+        }
+    } catch (err) {
+        updateBadge(statusEls.wifiConnected, false, ['Ligado', 'Desligado']);
+        updateBadge(statusEls.softapStatus, false, ['Clientes', 'Vazio']);
+        if (statusEls.softapCount) {
+            statusEls.softapCount.textContent = '0';
+        }
+        if (statusEls.softapClients) {
+            statusEls.softapClients.innerHTML = '<span class="softap-empty">Sem dados.</span>';
+        }
+        updateBadge(statusEls.mqttConnected, false, ['Online', 'Offline']);
+        if (statusEls.mqttBroker) {
+            statusEls.mqttBroker.textContent = fallbackValue;
+        }
+        updateBadge(statusEls.sdMounted, false, ['Montado', 'Ausente']);
+        updateBadge(statusEls.dataMounted, false, ['Ativo', 'Desativado']);
+
+        if (statusEls.wifiIp) statusEls.wifiIp.textContent = fallbackValue;
+        if (statusEls.mqttLastAttempt) statusEls.mqttLastAttempt.textContent = fallbackValue;
+        if (statusEls.mqttFailCount) statusEls.mqttFailCount.textContent = fallbackValue;
+        if (statusEls.mqttSent) statusEls.mqttSent.textContent = fallbackValue;
+        if (statusEls.mqttBuffered) statusEls.mqttBuffered.textContent = fallbackValue;
+        if (statusEls.sdFree) statusEls.sdFree.textContent = fallbackValue;
+        if (statusEls.sdLogs) statusEls.sdLogs.textContent = fallbackValue;
+        if (statusEls.sdLastLog) statusEls.sdLastLog.textContent = fallbackValue;
+        if (statusEls.dataLines) statusEls.dataLines.textContent = fallbackValue;
+        if (statusEls.dataLast) statusEls.dataLast.textContent = fallbackValue;
+        if (statusEls.sysUptime) statusEls.sysUptime.textContent = fallbackValue;
+        if (statusEls.sysFirmware) statusEls.sysFirmware.textContent = fallbackValue;
+        if (statusEls.sysUid) statusEls.sysUid.textContent = fallbackValue;
+        console.error('Erro ao atualizar estado', err);
+    }
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(fetchStatus, statusIntervalMs);
+}
+
+if (form) {
+    if (periodInput) {
+        periodInput.addEventListener('focus', () => {
+            isEditingPeriod = true;
+        });
+        periodInput.addEventListener('blur', () => {
+            isEditingPeriod = false;
+        });
+    }
+
+    form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const formData = new FormData(form);
+        const body = new URLSearchParams(formData);
+        try {
+            const res = await fetch('/set_period', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'fetch',
+                },
+                body,
+            });
+            const text = await res.text();
+            let ok = res.ok;
+            let msg = text || 'Período atualizado.';
+            try {
+                const json = JSON.parse(text);
+                if (json.message) {
+                    msg = json.message;
+                }
+                if (json.error) {
+                    msg = json.error;
+                    ok = false;
+                }
+            } catch {
+                /* resposta não JSON */
+            }
+            showAlert(msg, !ok);
+        } catch (err) {
+            console.error('Erro ao atualizar período', err);
+            showAlert('Erro ao atualizar período.', true);
+        }
+    });
+}
+
+if (sdForm) {
+    const sendSdToggleUpdate = async () => {
+        const formData = new FormData();
+        if (sdToggle && sdToggle.checked) {
+            formData.append('enable_sd_logging', 'on');
+        }
+        const body = new URLSearchParams(formData);
+        try {
+            const res = await fetch('/update_config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'fetch',
+                },
+                body,
+            });
+            const text = await res.text();
+            let ok = res.ok;
+            let msg = text || 'Configuração atualizada.';
+            try {
+                const json = JSON.parse(text);
+                if (json.message) {
+                    msg = json.message;
+                }
+                if (json.error) {
+                    msg = json.error;
+                    ok = false;
+                }
+            } catch {
+                /* resposta não JSON */
+            }
+            showAlert(msg, !ok);
+        } catch (err) {
+            console.error('Erro ao atualizar configuração SD', err);
+            showAlert('Erro ao atualizar configuração.', true);
+        }
+    };
+
+    if (sdToggle) {
+        sdToggle.addEventListener('change', () => {
+            sendSdToggleUpdate();
+        });
+    }
+}
+
+fetchSensor();
+fetchStatus();
+</script>
+</body>
+</html>

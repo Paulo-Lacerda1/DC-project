@@ -1,0 +1,8 @@
+set(MODULE_SECURITY_SRCS
+    "${CMAKE_CURRENT_LIST_DIR}/security_aes.c"
+    "${CMAKE_CURRENT_LIST_DIR}/security_hmac.c"
+)
+
+set(MODULE_SECURITY_INCLUDE_DIRS
+    "${CMAKE_CURRENT_LIST_DIR}"
+)

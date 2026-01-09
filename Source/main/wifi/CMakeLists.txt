@@ -1,0 +1,8 @@
+set(MODULE_WIFI_SRCS
+    "${CMAKE_CURRENT_LIST_DIR}/mqtt_utils.c"
+    "${CMAKE_CURRENT_LIST_DIR}/task_mqtt.c"
+)
+
+set(MODULE_WIFI_INCLUDE_DIRS
+    "${CMAKE_CURRENT_LIST_DIR}"
+)

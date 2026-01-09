@@ -1,0 +1,10 @@
+set(MODULE_CORE_SRCS
+    "${CMAKE_CURRENT_LIST_DIR}/main.c"
+    "${CMAKE_CURRENT_LIST_DIR}/logging.c"
+    "${CMAKE_CURRENT_LIST_DIR}/led.c"
+    "${CMAKE_CURRENT_LIST_DIR}/system_status.c"
+)
+
+set(MODULE_CORE_INCLUDE_DIRS
+    "${CMAKE_CURRENT_LIST_DIR}"
+)
