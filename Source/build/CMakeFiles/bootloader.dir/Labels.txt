@@ -1,13 +1,13 @@
 # Target labels
  bootloader
 # Source files and their labels
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/CMakeFiles/bootloader
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/CMakeFiles/bootloader.rule
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/CMakeFiles/bootloader-complete.rule
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
-/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
+/home/paulo/Desktop/DC/Source/build/CMakeFiles/bootloader
+/home/paulo/Desktop/DC/Source/build/CMakeFiles/bootloader.rule
+/home/paulo/Desktop/DC/Source/build/CMakeFiles/bootloader-complete.rule
+/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule

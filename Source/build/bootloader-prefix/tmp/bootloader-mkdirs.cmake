@@ -5,18 +5,18 @@ cmake_minimum_required(VERSION 3.5)
 
 file(MAKE_DIRECTORY
   "/home/paulo/esp/v5.5.1/esp-idf/components/bootloader/subproject"
-  "/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader"
-  "/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix"
-  "/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/tmp"
-  "/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp"
-  "/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src"
-  "/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp"
+  "/home/paulo/Desktop/DC/Source/build/bootloader"
+  "/home/paulo/Desktop/DC/Source/build/bootloader-prefix"
+  "/home/paulo/Desktop/DC/Source/build/bootloader-prefix/tmp"
+  "/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp"
+  "/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src"
+  "/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp"
 )
 
 set(configSubDirs )
 foreach(subDir IN LISTS configSubDirs)
-    file(MAKE_DIRECTORY "/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp/${subDir}")
+    file(MAKE_DIRECTORY "/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp/${subDir}")
 endforeach()
 if(cfgdir)
-  file(MAKE_DIRECTORY "/home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader-prefix/src/bootloader-stamp${cfgdir}") # cfgdir has leading slash
+  file(MAKE_DIRECTORY "/home/paulo/Desktop/DC/Source/build/bootloader-prefix/src/bootloader-stamp${cfgdir}") # cfgdir has leading slash
 endif()

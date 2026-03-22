@@ -1,4 +1,4 @@
-/* * Data converted from /home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from /home/paulo/Desktop/DC/Source/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 #if !defined (__APPLE__) && !defined (__linux__)

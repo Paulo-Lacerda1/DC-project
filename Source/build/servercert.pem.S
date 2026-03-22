@@ -1,4 +1,4 @@
-/* * Data converted from /home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/main/server/certs/servercert.pem
+/* * Data converted from /home/paulo/Desktop/DC/Source/main/server/certs/servercert.pem
  * (null byte appended)
  */
 .data

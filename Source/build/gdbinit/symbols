@@ -13,8 +13,8 @@ end
 
 # Load bootloader symbols
 set confirm off
-    add-symbol-file /home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/bootloader/bootloader.elf
+    add-symbol-file /home/paulo/Desktop/DC/Source/build/bootloader/bootloader.elf
 set confirm on
 
 # Load application symbols
-file /home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/build/Source.elf
+file /home/paulo/Desktop/DC/Source/build/Source.elf

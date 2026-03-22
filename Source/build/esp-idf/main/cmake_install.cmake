@@ -1,4 +1,4 @@
-# Install script for directory: /home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/main
+# Install script for directory: /home/paulo/Desktop/DC/Source/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

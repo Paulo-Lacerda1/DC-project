@@ -1,4 +1,4 @@
-# Install script for directory: /home/paulo/Desktop/ProjetoDC/proj-final-p5-120202-120155/Source/components/components/Driver-ST7735-ESP32-C6-main/components/st7735_driver
+# Install script for directory: /home/paulo/Desktop/DC/Source/components/components/Driver-ST7735-ESP32-C6-main/components/st7735_driver
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
