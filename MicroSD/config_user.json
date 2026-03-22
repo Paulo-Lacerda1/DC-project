@@ -1,0 +1,1 @@
+{"mqtt_uri":"mqtts://10.101.122.41:8883","mqtt_topic":"data","mqtt_topic_events":"eventos","mqtt_client_id":"esp32_120202","mqtt_username":"","mqtt_password":"","periodo_leitura_ms":3000,"wifi_ssid":"Redmi","wifi_pass_enc":"G328+FGoOEKFJNkVzzpmdh3fd74puZcRFAyRCIHWUts="}

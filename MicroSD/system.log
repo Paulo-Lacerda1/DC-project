@@ -1,0 +1,33 @@
+T+000:00:00 | INFO | system_log | Logging inicializado em /sdcard/system.log (sem limite configurado). | HMAC=253fdbd59ebe607829175d62e5e89a287a5d33c3aaf54ac288680a7fa57152a0
+T+000:00:00 | INFO | app | Arranque do sistema. | HMAC=877523b221486e0b0c10112ef5d35093802e641c85844e66b325e981fd091011
+T+000:00:00 | INFO | app | Boot timestamp (uptime): 565 ms | HMAC=30561418d0ff7741a839181c4bbb0721e1ed1ba4ab35d3249c6e9257b5bf68a6
+T+000:00:00 | WARN | app | Relógio ainda não sincronizado; a aguardar SNTP. | HMAC=c6d0dcae1be6517211d5e95fe1c26b55c7cd7c3b7d26db046835380c2e590931
+T+000:00:00 | INFO | app | Firmware: Source v729729f5-dirty (Mar 20 2026 10:53:02) | HMAC=c930357e8392ccacaf82a5b65b717f6798cd005010ebe10320850e4504483a6c
+T+000:00:00 | INFO | config_manager | config_manufacturer.json carregado (UID=XPERIMENTA_2026). | HMAC=a96999037c1cdd68e976c549af07110f3ceaeef15c5dbd545193c446344ca71b
+T+000:00:00 | INFO | app | UID do dispositivo: XPERIMENTA_2026 | HMAC=6821c22b6217e9a25bfe71d2b30fcf21f07ccec507164464e36acd45d3a5f8b5
+T+000:00:00 | INFO | config_manager | Handlers de eventos Wi-Fi registados. | HMAC=fb66a9206a35f1726a9d7f48cea5fac86cdf484f4cce79d591e92569849a8c14
+T+000:00:00 | INFO | config_manager | SoftAP configurado com IP 192.168.4.1 | HMAC=0a830ab8e0c41a3094f036640f4d6670ed8d5848bb09dba1853600519e6560d4
+T+000:00:00 | INFO | config_manager | SoftAP "ESP_Config" configurado com password predefinida. | HMAC=664dbe037b0c4f70167687231414d6a25369403dd86bda2f9198f51f5ce4e64c
+T+000:00:00 | INFO | config_manager | SoftAP ativo; clientes podem ligar-se com o SSID ESP_Config. | HMAC=e0db005eaf12f81fc7f6d07806218de55b0d1e121a810e0e2553a2d1cc87a6be
+T+000:00:00 | INFO | config_manager | config_user.json válido e carregado. | HMAC=0be2964f2aef5acf0529b1362a29416496305f3a883cd1fcbe02df4a763df22a
+T+000:00:00 | INFO | config_manager | Config aplicada: periodo=3000 ms | HMAC=eb9a31e4fa3bfaa7788b050725fb9cc0edbe1f5d5d60932109f5cf3711b43b53
+T+000:00:00 | INFO | app | Período configurado: 3000 ms | HMAC=879b8688512c7d738c046bcec75838d8ee74ed6c95cf460c11127f6728bb1d69
+T+000:00:00 | INFO | task_mqtt | Certificado CA carregado (1078 bytes). | HMAC=c99d04d31c86f446ddf266ee3e22262f8bd721c8e58aa9df2d7a11fd93483447
+T+000:00:00 | INFO | DHT20 | DHT20 inicializado com sucesso. | HMAC=c2dd02e36f82fa67d63eb3a866a1c274641b70d5f01728d865df723280efd5a4
+T+000:00:00 | INFO | TASK_SENSOR | Ficheiro de dados limpo em /sdcard/data.txt. | HMAC=c623329820daee4d7e68a0f7525a6c67e1cc6ea6aad1d46e0c9c4948b4c3dc38
+T+000:00:01 | INFO | config_manager | SNTP iniciado; a sincronizar hora. | HMAC=df8c30f8581433247eb41abd464416ebd98927a18af11f5c521266287421de39
+11:26:23 | INFO | config_manager | Hora sincronizada: 2026-03-20 11:26:23 | HMAC=5b17a82a382b2449520cbb7b8bc2b12704df6da08c221a076778436d749ea703
+11:26:31 | WARN | task_mqtt | MQTT não conectou dentro do timeout inicial. | HMAC=9397ce86ff111bdc6097338a2dc4a103df7e0a6859fee30aa68bebf1ef42615b
+11:26:31 | WARN | task_mqtt | Reconexão MQTT falhou (ESP_FAIL). | HMAC=c8401e7ea859f8ae74525407b576fdf7ed88bbecdf11b07b1894cf2ad7ca0da2
+11:26:31 | WARN | task_mqtt | MQTT não conectado; leitura não será publicada até recuperar ligação. | HMAC=370b67bfa52cfeed3dee050e8a4fdf46a3b7264a5db11b21a18361f94ed9dbb5
+11:26:31 | ERROR | task_mqtt | MQTT erro (tls=32774 errno=0 code=0). | HMAC=872e6366ec7b63a042a81575b88249e11465d04a48d2d907d698996c2fd37960
+11:26:31 | WARN | task_mqtt | MQTT desligado. | HMAC=858506ce28ccb91a4e5dc018a9ae3d1283cd152809b13fa5b6582a8f73b08335
+11:26:32 | INFO | task_mqtt | A tentar reconectar MQTT (próximo atraso 1000 ms). | HMAC=137a1f63dd76cb9410826f35331fbd981a9ec348f4f61b3de51b28ea28baf29b
+11:26:33 | INFO | task_mqtt | MQTT ligado. | HMAC=d130d2dbf9430194610f83fe69b2dd0a85a16f1c861adbe0860b2a82e73431b1
+11:26:33 | INFO | config_manager | config_manufacturer.json carregado (UID=XPERIMENTA_2026). | HMAC=06bce3fab579440ffb9078a65d52f2ebcb00418c4a1b274dbe0ea2d26322a886
+11:26:51 | INFO | task_brightness | Backlight reduzido automaticamente para 20% devido a inatividade. | HMAC=7d910259b2ac780793f4cc74e1af1ac85d48b22061fcdaad36936c371592ff90
+11:27:06 | INFO | task_brightness | Backlight desligado automaticamente por inatividade prolongada. | HMAC=cff0949eb1af33d476a0b5fda8a4c5fb0ea80953148a875bfbb46c4dd32f1e78
+11:27:54 | WARN | TASK_SENSOR | Botão premido: sensor em modo de espera. | HMAC=fd3668e57baddf0c245a88430426558fbc22582baf5b3162d773d743f963cf9b
+11:27:55 | INFO | TASK_SENSOR | Botão largado: retomar leituras. | HMAC=c1f434b243dc3962093b08fc9a536bbb217264841f96defff4b30e970b754d19
+11:27:55 | WARN | TASK_SENSOR | Botão premido: sensor em modo de espera. | HMAC=a2be18d10889f5b45ce4f767f856761f9574345886cafb42cc8f0d1a034bced9
+11:27:55 | INFO | TASK_SENSOR | Botão largado: retomar leituras. | HMAC=c1f434b243dc3962093b08fc9a536bbb217264841f96defff4b30e970b754d19
