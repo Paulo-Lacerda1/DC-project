@@ -1,7 +1,34 @@
 # Projeto Final de DC
-Paulo Lacerda - 120202  
-Gabriel Marta - 120155
+Projeto final com ESP32, sensor de temperatura/humidade, display TFT, MQTT/HTTPS e armazenamento em microSD.
+![Circuito](Evidencias/circuito.png)
 
+## Visão geral
+Sistema embebido para monitorização de temperatura e humidade, com interface gráfica em TFT, configuração via servidor web e registos persistentes em microSD.
+
+## Funcionalidades
+- Interface gráfica no TFT com múltiplos ecrãs (boas-vindas, principal, logs, gráfico)
+- Servidor de configuração via SoftAP/HTTP e dashboard HTTPS
+- Publicação MQTT com TLS e HMAC
+- Registos em microSD com integridade (HMAC) e cifragem AES para credenciais
+- Modo standby e estratégia de redução de consumo no LED
+
+## Estrutura do repositório
+- `Source/` código-fonte do firmware
+- `Evidencias/` comprovações de funcionamento e imagens
+- `Documents/` documentos de apoio
+- `Recursos/` recursos adicionais
+- `Relatorio_Projeto_Final_DC.pdf` relatório final
+
+## Autores
+- Paulo Lacerda
+- Gabriel Marta
+
+## Nota final
+Progresso: 20  
+Defesa: 19.7  
+Final: 19.8
+
+## Entregas semanais
 Todas as comprovações de funcionamento encontram-se na pasta `Evidencias/...`.
 
 ## Semana: 5
